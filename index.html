@@ -126,17 +126,23 @@
         function renderEntries() {
           var list = document.getElementById("entryList"); if (!list) return;
           var n = state.entries.length;
-          var c = document.getElementById("entryCount"); if (c) c.textContent = n + " in the mix";
+          var c = document.getElementById("entryCount"); if (c) c.textContent = n + " peserta";
           var spin = document.getElementById("spinButton"); if (spin) spin.disabled = state.spinning || n === 0;
-          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = n === 0 ? "Add an entry to get started" : "One spin. One name. Let\u2019s see.";
-          if (n === 0) { list.innerHTML = "<div class=\"empty-list\"><strong>Your wheel is waiting</strong><span>Drop in at least one name, code, or number above.</span></div>"; return; }
+          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = n === 0 ? "Tambahkan peserta untuk memulai" : "Satu putaran. Satu pemenang. Siapa yang menang?";
+          if (n === 0) { list.innerHTML = "<div class=\"empty-list\"><strong>Daftar peserta masih kosong</strong><span>Mulai tambahkan peserta melalui halaman pendaftaran atau tambahkan manual di sini.</span></div>"; return; }
           list.innerHTML = "";
           for (var i = 0; i < n; i++) {
             var e = state.entries[i], row = document.createElement("div");
             row.className = "entry-row";
             var mk = document.createElement("span"); mk.className = "entry-mark"; mk.style.background = ec[i % ec.length];
-            var nm = document.createElement("span"); nm.className = "entry-name"; nm.textContent = e.name;
-            var rm = document.createElement("button"); rm.type = "button"; rm.className = "entry-remove"; rm.textContent = "\u00d7"; rm.title = "Remove";
+            var nm = document.createElement("span"); nm.className = "entry-name"; 
+            // Tampilkan nama lengkap jika ada, jika tidak tampilkan kode
+            nm.textContent = e.fullName || e.full || e.name;
+            // Tambahkan kode kecil di belakang nama
+            if(e.fullName || e.full) {
+              nm.innerHTML += " <small style=\"opacity:0.7;font-size:11px;\">(" + e.code + ")</small>";
+            }
+            var rm = document.createElement("button"); rm.type = "button"; rm.className = "entry-remove"; rm.textContent = "\u00d7"; rm.title = "Hapus";
             rm.onclick = (function (id) { return function () { state.entries = state.entries.filter(function (x) { return x.id !== id; }); persist(); render(); }; })(e.id);
             row.appendChild(mk); row.appendChild(nm); row.appendChild(rm); list.appendChild(row);
           }
@@ -144,7 +150,7 @@
         function renderHistory() {
           var list = document.getElementById("historyList"); if (!list) return;
           var n = state.history.length;
-          if (n === 0) { list.innerHTML = "<div class=\"empty-history\"><strong>No winners yet</strong><span>Your first lucky reveal will land here.</span></div>"; return; }
+          if (n === 0) { list.innerHTML = "<div class=\"empty-history\"><strong>Belum ada pemenang</strong><span>Pemenang pertama akan muncul di sini setelah spin.</span></div>"; return; }
           list.innerHTML = "";
           for (var i = 0; i < n; i++) {
             var h = state.history[i], row = document.createElement("div");
@@ -162,8 +168,8 @@
           var X = 360 - (seg * (k + 0.5)) - B; while (X < 0) X += 360;
           var target = state.rotation + 1440 + X; state.rotation = target;
           if (rotor) { rotor.style.transition = "transform 3.8s cubic-bezier(.15,.7,.15,.1)"; rotor.style.transform = "rotate(" + target + "deg)"; }
-          var btn = document.getElementById("spinButton"); if (btn) { btn.disabled = true; btn.textContent = "Finding your winner\u2026"; }
-          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = "Spinning\u2026";
+          var btn = document.getElementById("spinButton"); if (btn) { btn.disabled = true; btn.textContent = "Mencari pemenang\u2026"; }
+          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = "Lagi berputar\u2026";
           setTimeout(function () {
             var winner = state.entries[k];
             state.spinning = false;
@@ -185,24 +191,24 @@
           root.innerHTML =
             '<header class="topbar">' +
               '<a class="brand" href="./"><span class="brand-mark">H</span><div><div class="brand-name">Spin Wheel Hadiah</div><div class="brand-sub">make a moment of it</div></div></a>' +
-              '<nav class="topbar-actions"><a class="registration-link" href="/pendaftaran/">Daftar peserta</a><div class="topbar-note"><span class="live-dot"></span>Ready for a lucky draw</div></nav>' +
+              '<nav class="topbar-actions"><a class="registration-link" href="/pendaftaran/">Daftar peserta</a><div class="topbar-note"><span class="live-dot"></span>Siap untuk undian</div></nav>' +
             "</header>" +
             '<main class="app-shell">' +
               '<section class="intro"><div><p class="eyebrow">A little suspense, beautifully spun</p><h1 class="hero-title">Who gets the <em>good stuff?</em></h1></div><p class="intro-copy">Load the names, set the prize, then let the wheel make the call. No awkward counting. No &ldquo;you pick.&rdquo;</p></section>' +
               '<div class="workspace">' +
                 '<section class="stage-card" aria-label="Spin wheel area"><div class="stage-top"><span class="stage-label">Lucky draw / live board</span><span class="entry-count" id="entryCount"></span></div>' +
                 '<div class="wheel-wrap"><div class="wheel-pin"></div><div class="wheel-rotor" id="wheelRotor"><div id="wheel" class="wheel"></div></div></div>' +
-                '<div class="spin-area"><button id="spinButton" class="spin-button" type="button" onclick="window.__spin&&window.__spin()">Spin the wheel</button><p id="spinHint" class="spin-hint"></p></div></section>' +
+                '<div class="spin-area"><button id="spinButton" class="spin-button" type="button" onclick="window.__spin&&window.__spin()">Putar Roda</button><p id="spinHint" class="spin-hint"></p></div></section>' +
                 '<div class="side-stack">' +
-                  '<section class="panel" aria-labelledby="entries-title"><div class="panel-header"><div><h2 id="entries-title" class="panel-title">Pick your cast</h2><p class="panel-kicker">Names, numbers, ticket codes &mdash; anything goes.</p></div><button class="clear-button" type="button" onclick="window.__clear&&window.__clear()">Clear</button></div>' +
+                  '<section class="panel" aria-labelledby="entries-title"><div class="panel-header"><div><h2 id="entries-title" class="panel-title">Daftar Peserta</h2><p class="panel-kicker">Semua peserta yang terdaftar dalam undian.</p></div><button class="clear-button" type="button" onclick="window.__clear&&window.__clear()">Hapus Semua</button></div>' +
                   '<form class="entry-form" onsubmit="return window.__add(event)"><label class="field-shell"><input id="entryInput" maxlength="42" placeholder="e.g. Putri, #042, Team B"></label><button class="add-button" type="submit" title="Add">+</button></form>' +
                   '<div id="entryList" class="entry-list"></div></section>' +
-                  '<section class="panel" aria-labelledby="history-title"><div class="panel-header"><div><h2 id="history-title" class="panel-title">Recent winners</h2><p class="panel-kicker">Last lucky names from this screen.</p></div></div><div id="historyList" class="history-list"></div></section>' +
+                  '<section class="panel" aria-labelledby="history-title"><div class="panel-header"><div><h2 id="history-title" class="panel-title">Pemenang Terbaru</h2><p class="panel-kicker">Daftar pemenang undian hari ini.</p></div></div><div id="historyList" class="history-list"></div></section>' +
                 "</div>" +
               "</div>" +
               '<div class="footer-note">Your entries stay in this browser &middot; perfect for a shared screen.</div>' +
             "</main>" +
-            '<div id="reveal" class="reveal hidden" role="dialog" aria-modal="true"><div class="reveal-card"><button class="close-reveal" type="button" onclick="window.__close&&window.__close()" aria-label="Close">&times;</button><p class="reveal-label">The wheel has spoken</p><div class="reveal-icon">&#127919;</div><h2 class="reveal-name" id="revealName"></h2><p class="reveal-prize">takes home <strong id="revealPrize"></strong></p><div class="reveal-actions"><button class="remove-button" type="button" onclick="window.__removeWinner&&window.__removeWinner()">Remove winner</button><button class="keep-button" type="button" onclick="window.__close&&window.__close()">Keep in wheel</button></div></div></div>';
+            '<div id="reveal" class="reveal hidden" role="dialog" aria-modal="true"><div class="reveal-card"><button class="close-reveal" type="button" onclick="window.__close&&window.__close()" aria-label="Tutup">&times;</button><p class="reveal-label">Roda telah berbicara!</p><div class="reveal-icon">&#127919;</div><h2 class="reveal-name" id="revealName"></h2><p class="reveal-prize">mendapatkan <strong id="revealPrize"></strong></p><div class="reveal-actions"><button class="remove-button" type="button" onclick="window.__removeWinner&&window.__removeWinner()">Hapus pemenang</button><button class="keep-button" type="button" onclick="window.__close&&window.__close()">Biarkan tetap ada</button></div></div></div>';
           rotor = document.getElementById("wheelRotor");
         }
         build();

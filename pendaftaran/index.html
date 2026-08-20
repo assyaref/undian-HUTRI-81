@@ -55,14 +55,41 @@
           var dept = document.getElementById("regDept");
           var res = document.getElementById("regResult");
           if (!name || !dept || !res) return false;
+          
           var nm = name.value.trim(), dp = dept.value.trim();
-          if (!nm || !dp) return false;
-          var code = "#HUT-81-" + Math.random().toString(36).slice(2, 6).toUpperCase();
-          var entries = readEntries();
-          entries.push({ id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), name: code, full: nm });
-          localStorage.setItem("hadiah-entries", JSON.stringify(entries));
-          window.__curCode = code;
-          res.innerHTML = '<div class="registration-card" style="text-align:center"><span class="success-mark">\u2713</span><h2 class="success-title">Pendaftaran berhasil, ' + esc(nm) + '</h2><p class="success-detail">Kode unik lucky draw:</p><p class="success-code">' + esc(code) + '</p><p class="success-detail">' + esc(dp) + " &middot; Kode sudah ditambahkan ke lucky draw.</p><button class=\"succ-button\" type=\"button\" onclick=\"window.copyCode()\">Salin kode</button></div>";
+          if (!nm || !dp) {
+            alert("Mohon isi semua field dengan lengkap!");
+            return false;
+          }
+          
+          // Generate kode unik yang lebih aman
+          var timestamp = Date.now();
+          var randomStr = Math.random().toString(36).slice(2, 8).toUpperCase();
+          var code = "#HUT81-" + randomStr;
+          
+          try {
+            var entries = readEntries();
+            // Simpan data lengkap untuk keperluan audit
+            entries.push({ 
+              id: timestamp + "-" + Math.random().toString(36).slice(2, 7), 
+              code: code,
+              name: code, // Tampilkan kode di wheel spin
+              fullName: nm, 
+              department: dp,
+              registeredAt: new Date().toISOString()
+            });
+            localStorage.setItem("hadiah-entries", JSON.stringify(entries));
+            window.__curCode = code;
+            
+            // Reset form
+            name.value = "";
+            dept.value = "";
+            
+            // Tampilkan pesan sukses dengan tombol kembali ke wheel
+            res.innerHTML = '<div class="registration-card" style="text-align:center"><span class="success-mark">\u2713</span><h2 class="success-title">Pendaftaran berhasil!</h2><p class="success-detail">Kode unik lucky draw kamu:</p><p class="success-code">' + esc(code) + '</p><p class="success-detail">' + esc(nm) + ' &middot; ' + esc(dp) + '</p><p style="margin-top:12px;font-size:12px;color:#16705a;">✅ Kode berhasil ditambahkan ke daftar undian!</p><div style="display:flex;gap:12px;justify-content:center;margin-top:18px;"><button class="succ-button" type="button" onclick="window.copyCode()" style="background:hsl(37 25% 92%);color:hsl(246 12% 43%);">Salin kode</button><a href="/" class="succ-button" style="text-decoration:none;display:inline-block;">Buka Spin Wheel</a></div></div>';
+          } catch (e) {
+            res.innerHTML = '<div class="registration-card" style="text-align:center"><span class="success-mark" style="background:#ef6657;">!</span><h2 class="success-title">Terjadi kesalahan</h2><p class="success-detail">Mohon coba lagi nanti.</p><a href="/" class="succ-button" style="text-decoration:none;display:inline-block;margin-top:18px;">Kembali</a></div>';
+          }
           return false;
         };
         var root = document.getElementById("root");
@@ -71,7 +98,7 @@
           '<main class="registration-page">' +
             '<p class="registration-eyebrow">Form pendaftaran</p>' +
             '<h1 class="registration-title">Peserta Undian HUT RI ke-81 x Radiant Group</h1>' +
-            '<p class="registration-copy">Daftarkan diri untuk mendapatkan kode unik lucky draw.</p>' +
+            '<p class="registration-copy">Daftarkan diri untuk mendapatkan kode unik lucky draw. <span style="color:#16705a;font-weight:600;">Total peserta terdaftar: ' + readEntries().length + '</span></p>' +
             '<div class="registration-card"><form onsubmit="return window.__reg(event)">' +
               '<div class="registration-field"><label for="regName">Nama lengkap</label><input id="regName" maxlength="60" required placeholder="Contoh: Putri Anggraini"></div>' +
               '<div class="registration-field"><label for="regDept">Departemen</label><input id="regDept" maxlength="60" required placeholder="Contoh: Human Resources"></div>' +
