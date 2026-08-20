@@ -8,7 +8,8 @@
     <meta name="robots" content="index, follow" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="cache-control" content="no-cache" />
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <base href="/">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -65,7 +66,7 @@
         };
         var root = document.getElementById("root");
         root.innerHTML =
-          '<header class="topbar"><a class="brand" href="../"><span class="brand-mark">H</span><div><div class="brand-name">Spin Wheel Hadiah</div><div class="brand-sub">make a moment of it</div></div></a></header>' +
+          '<header class="topbar"><a class="brand" href="/"><span class="brand-mark">H</span><div><div class="brand-name">Spin Wheel Hadiah</div><div class="brand-sub">make a moment of it</div></div></a></header>' +
           '<main class="registration-page">' +
             '<p class="registration-eyebrow">Form pendaftaran</p>' +
             '<h1 class="registration-title">Peserta Undian HUT RI ke-81 x Radiant Group</h1>' +
@@ -74,7 +75,7 @@
               '<div class="registration-field"><label for="regName">Nama lengkap</label><input id="regName" maxlength="60" required placeholder="Contoh: Putri Anggraini"></div>' +
               '<div class="registration-field"><label for="regDept">Departemen</label><input id="regDept" maxlength="60" required placeholder="Contoh: Human Resources"></div>' +
               '<button class="register-button" type="submit">Daftar &amp; Dapatkan kode</button>' +
-            '</form></div><div id="regResult"></div><a class="back-link" href="../">\u2190 Back to the spin wheel</a>' +
+            '</form></div><div id="regResult"></div><a class="back-link" href="/">\u2190 Back to the spin wheel</a>' +
           "</main>";
       })();
     </script>
