@@ -2,24 +2,210 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spin Wheel Hadiah</title>
-    <meta name="description" content="Spin Wheel Hadiah — built on Replit. Update this description to reflect the app." />
+    <meta name="description" content="Spin Wheel Hadiah — Undian HUT RI ke-81. Load the names, set the prize, spin the wheel." />
     <meta name="robots" content="index, follow" />
     <meta property="og:title" content="Spin Wheel Hadiah" />
-    <meta property="og:description" content="Spin Wheel Hadiah — built on Replit. Update this description to reflect the app." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Spin Wheel Hadiah" />
-    <meta name="twitter:description" content="Spin Wheel Hadiah — built on Replit. Update this description to reflect the app." />
+    <meta property="og:description" content="Undian HUT RI ke-81 lucky draw spin wheel." />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-rJWbn18Z.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BfxzWdJj.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box}
+      body{margin:0;background:hsl(36 53% 94%);color:hsl(246 31% 16%);font-family:"Space Grotesk",-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased}
+      .app-shell{min-height:100vh;padding-bottom:60px}
+      a{color:inherit;text-decoration:none}
+      .topbar{display:flex;justify-content:space-between;align-items:center;height:78px;padding:0 clamp(20px,5vw,72px);background:#27234af5;color:#f6ecd8}
+      .brand{display:flex;align-items:center;gap:12px}
+      .brand-mark{width:38px;height:38px;display:grid;place-items:center;background:#f38b63;color:#29244a;border-radius:12px 12px 12px 4px;transform:rotate(-7deg);box-shadow:4px 4px #7970ce;font-weight:700}
+      .brand-name{font-size:17px;font-weight:700;letter-spacing:-.04em}
+      .brand-sub{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c7bee9}
+      .topbar-actions{display:flex;align-items:center;gap:20px}
+      .registration-link{color:#dfd6f5;font-size:13px;font-weight:600;padding:9px 14px;border:1px solid #ffffff26;border-radius:10px}
+      .registration-link:hover{background:#ffffff14}
+      .topbar-note{display:flex;align-items:center;gap:9px;color:#cbc3e5;font-size:12px}
+      .live-dot{width:7px;height:7px;border-radius:999px;background:#79d1ab;box-shadow:0 0 0 4px #79d1ab24}
+      .main-grid{width:min(1440px,100%);margin:0 auto;padding:clamp(24px,4vw,58px) clamp(20px,5vw,72px) 40px}
+      .intro{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:34px}
+      .eyebrow{font-family:"DM Mono",monospace;color:#7167bd;letter-spacing:.12em;text-transform:uppercase;font-size:11px;margin:0 0 11px}
+      .hero-title{font-family:"Fraunces",serif;letter-spacing:-.055em;margin:0;font-size:clamp(38px,5vw,68px);font-weight:700;line-height:.98}
+      .hero-title em{color:#d96c49;font-style:normal}
+      .intro-copy{max-width:300px;color:hsl(246 12% 43%);margin:0 0 5px;font-size:14px;line-height:1.55}
+      .workspace{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr);gap:28px;align-items:start}
+      .stage-card,.panel{border:1px solid hsl(37 25% 80%);background:hsl(39 67% 98%);border-radius:26px;box-shadow:0 18px 55px #3d2f5b14}
+      .stage-card{display:flex;flex-direction:column;justify-content:space-between;align-items:center;min-height:620px;padding:clamp(20px,3vw,38px);position:relative;overflow:hidden}
+      .stage-card:before{content:"";opacity:.35;pointer-events:none;background:#f8dca0;border-radius:50%;width:420px;height:420px;position:absolute;bottom:-210px;left:-180px}
+      .stage-top{display:flex;justify-content:space-between;align-items:center;width:100%;position:relative;z-index:1}
+      .stage-label{color:hsl(246 12% 43%);font-size:13px;font-weight:600}
+      .entry-count{color:#7167bd;font-family:"DM Mono",monospace;font-size:12px}
+      .wheel-wrap{position:relative;width:min(420px,88%);aspect-ratio:1/1;margin:10px 0;z-index:1}
+      .wheel-rotor{width:100%;height:100%;border-radius:50%;overflow:hidden;border:10px solid #29244a;box-shadow:0 20px 50px #3d2f5b33;will-change:transform}
+      .wheel{width:100%;height:100%}
+      .wheel svg{display:block;width:100%;height:100%}
+      .wheel-pin{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:28px solid #f3c969;z-index:3;filter:drop-shadow(0 2px 3px #00000055)}
+      .spin-area{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px}
+      .spin-button{font-family:"Space Grotesk",sans-serif;font-size:17px;font-weight:700;color:#fff;background:hsl(258 79% 59%);border:none;border-radius:999px;padding:16px 42px;cursor:pointer;box-shadow:0 10px 25px #5529d033;transition:transform .15s ease,opacity .2s}
+      .spin-button:hover:not(:disabled){transform:translateY(-2px)}
+      .spin-button:disabled{opacity:.5;cursor:not-allowed}
+      .spin-hint{color:hsl(246 12% 43%);font-size:13px;margin:0}
+      .side-stack{display:flex;flex-direction:column;gap:28px}
+      .panel{padding:clamp(18px,2vw,26px)}
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <style>
+      .panel-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}
+      .panel-title{margin:0;font-size:19px;letter-spacing:-.02em}
+      .panel-kicker{margin:4px 0 0;color:hsl(246 12% 43%);font-size:12px}
+      .clear-button{font-family:inherit;font-size:12px;font-weight:600;color:hsl(246 12% 43%);background:transparent;border:1px solid hsl(37 25% 80%);border-radius:999px;padding:7px 13px;cursor:pointer}
+      .clear-button:hover{background:hsl(37 25% 92%)}
+      .entry-form{display:flex;gap:10px;margin-bottom:14px}
+      .field-shell{flex:1;display:flex;align-items:center;background:hsl(37 25% 94%);border:1px solid hsl(37 25% 80%);border-radius:14px;padding:0 14px}
+      .field-shell input{width:100%;background:transparent;outline:none;padding:13px 0;font:inherit;color:inherit}
+      .add-button{width:46px;border:none;border-radius:14px;background:hsl(258 79% 59%);color:#fff;font-size:22px;cursor:pointer}
+      .entry-list,.history-list{display:flex;flex-direction:column;gap:8px}
+      .entry-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:hsl(37 25% 94%)}
+      .entry-mark{width:10px;height:10px;border-radius:50%;flex:none}
+      .entry-name{flex:1;font-size:14px}
+      .entry-remove{border:none;background:transparent;color:hsl(246 12% 43%);font-size:18px;cursor:pointer;line-height:1}
+      .empty-list,.empty-history{display:flex;flex-direction:column;gap:4px;color:hsl(246 12% 43%);text-align:center;padding:18px;font-size:13px}
+      .history-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:hsl(37 25% 94%);font-size:13px}
+      .history-item div{display:flex;flex-direction:column}
+      .history-item strong{display:block;font-size:13px}
+      .history-item span{color:hsl(246 12% 43%);font-size:12px}
+      .history-item time{margin-left:auto;color:hsl(246 12% 43%);font-size:11px;font-family:"DM Mono",monospace}
+      .history-dot{width:8px;height:8px;border-radius:50%;background:hsl(161 54% 46%);flex:none}
+      .footer-note{display:flex;justify-content:center;gap:6px;color:hsl(246 12% 43%);font-size:12px;margin-top:8px}
+      .reveal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0c0b1a99;z-index:50;padding:20px}
+      .reveal.hidden{display:none}
+      .reveal-card{position:relative;background:#fff;border-radius:26px;padding:38px 34px 30px;text-align:center;max-width:360px;width:100%;box-shadow:0 30px 80px #00000066}
+      .close-reveal{position:absolute;top:14px;right:14px;border:none;background:transparent;font-size:24px;cursor:pointer;color:hsl(246 12% 43%)}
+      .reveal-label{color:#7167bd;font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;margin:0}
+      .reveal-icon{font-size:30px;margin:12px 0}
+      .reveal-name{font-family:"Fraunces",serif;margin:0;font-size:34px;letter-spacing:-.03em}
+      .reveal-prize{color:hsl(246 12% 43%);margin:8px 0 22px}
+      .reveal-actions{display:flex;flex-direction:column;gap:10px}
+      .keep-button,.remove-button{border:none;border-radius:999px;padding:13px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+      .keep-button{background:hsl(258 79% 59%);color:#fff}
+      .remove-button{background:hsl(37 25% 92%);color:hsl(246 12% 43%)}
+      @media (max-width:900px){.workspace{grid-template-columns:1fr}.intro{flex-direction:column;align-items:flex-start}.topbar-note{display:none}}
+    </style>
+    <script>
+      (function () {
+        "use strict";
+        var ec = ["#ef6657", "#7a68cd", "#f0a851", "#ffd9a0", "#b9a7d8", "#f28f6b", "#6359b8", "#e8c77e"];
+        var state = { entries: load("hadiah-entries", []), history: load("hadiah-history", []), rotation: 0, spinning: false, prizeText: "A surprise prize" };
+        var rotor = null;
+        function load(k, f) { try { var r = localStorage.getItem(k); return r ? JSON.parse(r) || f : f; } catch (e) { return f; } }
+        function persist() { try { localStorage.setItem("hadiah-entries", JSON.stringify(state.entries)); localStorage.setItem("hadiah-history", JSON.stringify(state.history)); } catch (e) {} }
+        function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+        function polar(cx, cy, r, a) { var rad = (a - 90) * Math.PI / 180; return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }; }
+        function wedgePath(i, n, r) { var a0 = 360 / n * i, a1 = 360 / n * (i + 1), p0 = polar(250, 250, r, a0), p1 = polar(250, 250, r, a1), large = a1 - a0 > 180 ? 1 : 0; return "M250,250 L" + p0.x.toFixed(2) + "," + p0.y.toFixed(2) + " A" + r + " " + r + " 0 " + large + " 1 " + p1.x.toFixed(2) + "," + p1.y.toFixed(2) + " Z"; }
+        function renderWheel() {
+          var el = document.getElementById("wheel"); if (!el) return;
+          var n = state.entries.length, inner = "";
+          if (n === 0) { el.innerHTML = ""; return; }
+          if (n === 1) {
+            inner = '<circle cx="250" cy="250" r="228" fill="' + ec[0] + '"></circle><text x="250" y="250" text-anchor="middle" dominant-baseline="middle" style="font-size:24px;fill:#fff">' + esc(state.entries[0].name) + "</text>";
+          } else {
+            for (var i = 0; i < n; i++) {
+              var mid = 360 / n * (i + 0.5), pt = polar(250, 250, 116, mid);
+              var nm = state.entries[i].name, lab = nm.length > 13 ? nm.slice(0, 12) + "\u2026" : nm;
+              inner += '<path d="' + wedgePath(i, n, 228) + '" fill="' + ec[i % ec.length] + '"></path><text x="' + pt.x.toFixed(2) + '" y="' + pt.y.toFixed(2) + '" text-anchor="middle" dominant-baseline="middle" style="font-size:15px;fill:#fff">' + esc(lab) + "</text>";
+            }
+          }
+          el.innerHTML = '<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"><g>' + inner + '<circle cx="250" cy="250" r="40" fill="#29244a"></circle></g></svg>';
+        }
+        function renderEntries() {
+          var list = document.getElementById("entryList"); if (!list) return;
+          var n = state.entries.length;
+          var c = document.getElementById("entryCount"); if (c) c.textContent = n + " in the mix";
+          var spin = document.getElementById("spinButton"); if (spin) spin.disabled = state.spinning || n === 0;
+          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = n === 0 ? "Add an entry to get started" : "One spin. One name. Let\u2019s see.";
+          if (n === 0) { list.innerHTML = "<div class=\"empty-list\"><strong>Your wheel is waiting</strong><span>Drop in at least one name, code, or number above.</span></div>"; return; }
+          list.innerHTML = "";
+          for (var i = 0; i < n; i++) {
+            var e = state.entries[i], row = document.createElement("div");
+            row.className = "entry-row";
+            var mk = document.createElement("span"); mk.className = "entry-mark"; mk.style.background = ec[i % ec.length];
+            var nm = document.createElement("span"); nm.className = "entry-name"; nm.textContent = e.name;
+            var rm = document.createElement("button"); rm.type = "button"; rm.className = "entry-remove"; rm.textContent = "\u00d7"; rm.title = "Remove";
+            rm.onclick = (function (id) { return function () { state.entries = state.entries.filter(function (x) { return x.id !== id; }); persist(); render(); }; })(e.id);
+            row.appendChild(mk); row.appendChild(nm); row.appendChild(rm); list.appendChild(row);
+          }
+        }
+        function renderHistory() {
+          var list = document.getElementById("historyList"); if (!list) return;
+          var n = state.history.length;
+          if (n === 0) { list.innerHTML = "<div class=\"empty-history\"><strong>No winners yet</strong><span>Your first lucky reveal will land here.</span></div>"; return; }
+          list.innerHTML = "";
+          for (var i = 0; i < n; i++) {
+            var h = state.history[i], row = document.createElement("div");
+            row.className = "history-item";
+            row.innerHTML = '<span class="history-dot"></span><div><strong>' + esc(h.winner) + "</strong><span>" + esc(h.prize) + "</span></div><time>" + esc(h.time) + "</time>";
+            list.appendChild(row);
+          }
+        }
+        function render() { renderWheel(); renderEntries(); renderHistory(); }
+        function spin() {
+          var n = state.entries.length; if (state.spinning || n === 0) return;
+          state.spinning = true;
+          var k = Math.floor(Math.random() * n), seg = 360 / n;
+          var B = ((state.rotation % 360) + 360) % 360;
+          var X = 360 - (seg * (k + 0.5)) - B; while (X < 0) X += 360;
+          var target = state.rotation + 1440 + X; state.rotation = target;
+          if (rotor) { rotor.style.transition = "transform 3.8s cubic-bezier(.15,.7,.15,.1)"; rotor.style.transform = "rotate(" + target + "deg)"; }
+          var btn = document.getElementById("spinButton"); if (btn) { btn.disabled = true; btn.textContent = "Finding your winner\u2026"; }
+          var hint = document.getElementById("spinHint"); if (hint) hint.textContent = "Spinning\u2026";
+          setTimeout(function () {
+            var winner = state.entries[k];
+            state.spinning = false;
+            state.history.unshift({ id: Date.now() + "-" + k, winner: winner.name, prize: state.prizeText, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) });
+            state.history = state.history.slice(0, 20); persist();
+            renderEntries(); renderHistory(); showReveal(winner);
+          }, 3900);
+        }
+        function showReveal(w) { var m = document.getElementById("reveal"); if (!m) return; document.getElementById("revealName").textContent = w.name; document.getElementById("revealPrize").textContent = state.prizeText; m.classList.remove("hidden"); }
+        function hideReveal() { var m = document.getElementById("reveal"); if (m) m.classList.add("hidden"); }
+        function removeWinner() { var nm = document.getElementById("revealName").textContent; state.entries = state.entries.filter(function (e) { return e.name !== nm; }); persist(); render(); hideReveal(); }
+        window.__spin = spin;
+        window.__close = hideReveal;
+        window.__removeWinner = removeWinner;
+        window.__clear = function () { if (state.entries.length === 0) return; if (!confirm("Clear every entry from this wheel?")) return; state.entries = []; persist(); render(); };
+        window.__add = function (ev) { ev.preventDefault(); var input = document.getElementById("entryInput"); var val = (input.value || "").trim(); if (val) { state.entries.push({ id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), name: val }); persist(); render(); input.value = ""; } return false; };
+        function build() {
+          var root = document.getElementById("root");
+          root.innerHTML =
+            '<header class="topbar">' +
+              '<a class="brand" href="./"><span class="brand-mark">H</span><div><div class="brand-name">Spin Wheel Hadiah</div><div class="brand-sub">make a moment of it</div></div></a>' +
+              '<nav class="topbar-actions"><a class="registration-link" href="./pendaftaran/">Daftar peserta</a><div class="topbar-note"><span class="live-dot"></span>Ready for a lucky draw</div></nav>' +
+            "</header>" +
+            '<main class="app-shell">' +
+              '<section class="intro"><div><p class="eyebrow">A little suspense, beautifully spun</p><h1 class="hero-title">Who gets the <em>good stuff?</em></h1></div><p class="intro-copy">Load the names, set the prize, then let the wheel make the call. No awkward counting. No &ldquo;you pick.&rdquo;</p></section>' +
+              '<div class="workspace">' +
+                '<section class="stage-card" aria-label="Spin wheel area"><div class="stage-top"><span class="stage-label">Lucky draw / live board</span><span class="entry-count" id="entryCount"></span></div>' +
+                '<div class="wheel-wrap"><div class="wheel-pin"></div><div class="wheel-rotor" id="wheelRotor"><div id="wheel" class="wheel"></div></div></div>' +
+                '<div class="spin-area"><button id="spinButton" class="spin-button" type="button" onclick="window.__spin&&window.__spin()">Spin the wheel</button><p id="spinHint" class="spin-hint"></p></div></section>' +
+                '<div class="side-stack">' +
+                  '<section class="panel" aria-labelledby="entries-title"><div class="panel-header"><div><h2 id="entries-title" class="panel-title">Pick your cast</h2><p class="panel-kicker">Names, numbers, ticket codes &mdash; anything goes.</p></div><button class="clear-button" type="button" onclick="window.__clear&&window.__clear()">Clear</button></div>' +
+                  '<form class="entry-form" onsubmit="return window.__add(event)"><label class="field-shell"><input id="entryInput" maxlength="42" placeholder="e.g. Putri, #042, Team B"></label><button class="add-button" type="submit" title="Add">+</button></form>' +
+                  '<div id="entryList" class="entry-list"></div></section>' +
+                  '<section class="panel" aria-labelledby="history-title"><div class="panel-header"><div><h2 id="history-title" class="panel-title">Recent winners</h2><p class="panel-kicker">Last lucky names from this screen.</p></div></div><div id="historyList" class="history-list"></div></section>' +
+                "</div>" +
+              "</div>" +
+              '<div class="footer-note">Your entries stay in this browser &middot; perfect for a shared screen.</div>' +
+            "</main>" +
+            '<div id="reveal" class="reveal hidden" role="dialog" aria-modal="true"><div class="reveal-card"><button class="close-reveal" type="button" onclick="window.__close&&window.__close()" aria-label="Close">&times;</button><p class="reveal-label">The wheel has spoken</p><div class="reveal-icon">&#127919;</div><h2 class="reveal-name" id="revealName"></h2><p class="reveal-prize">takes home <strong id="revealPrize"></strong></p><div class="reveal-actions"><button class="remove-button" type="button" onclick="window.__removeWinner&&window.__removeWinner()">Remove winner</button><button class="keep-button" type="button" onclick="window.__close&&window.__close()">Keep in wheel</button></div></div></div>';
+          rotor = document.getElementById("wheelRotor");
+        }
+        build();
+        render();
+      })();
+    </script>
   </body>
 </html>
